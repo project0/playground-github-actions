@@ -1,0 +1,20 @@
+# Trigger a workflow run on a pull request labeled w
+on:
+  pull_request:
+    types: [labeled]
+  label:
+    types: [created]
+
+jobs:
+  deploy-sbx:
+    if: ${{ github.event.label.name == 'deploy/sbx' }}
+    name: Build and Deploy (SBX)
+    uses: ./.github/workflows/deploy.yaml
+    with:
+      deploy_environments: '["sbx"]'
+  deploy-dev:
+    if: ${{ github.event.label.name == 'deploy/dev' }}
+    name: Build and Deploy (DEV)
+    uses: ./.github/workflows/deploy.yaml
+    with:
+      deploy_environments: '["dev"]'
