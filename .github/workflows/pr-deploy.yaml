@@ -5,27 +5,23 @@ on:
   label:
     types: [created]
 
+
 permissions:
   pull-requests: write
   id-token: write # This is required for requesting the JWT
   contents: read # This is required for actions/checkout
 jobs:
-  deploy-sbx:
-    if: ${{ github.event.label.name == 'deploy/sbx' }}
-    name: Build and Deploy (SBX)
+  deploy:
+    if: ${{ contains(fromJson('["deploy/sbx", "deploy/dev"]'), github.event.label.name) }}
+    name: Build and Deploy (${{ github.event.label.name}})
     uses: ./.github/workflows/deploy.yaml
     with:
-      deploy_environments: '["sbx"]'
-  deploy-dev:
-    if: ${{ github.event.label.name == 'deploy/dev' }}
-    name: Build and Deploy (DEV)
-    uses: ./.github/workflows/deploy.yaml
-    with:
-      deploy_environments: '["dev"]'
+      deploy_environments: ${{ toJSON(fromJSON('{"deploy/sbx": ["sbx"], "deploy/dev": ["dev"]}')[github.event.label.name]) }}
+
 
   comment:
     runs-on: ubuntu-latest
-    needs: [deploy-sbx, deploy-dev]
+    needs: [deploy]
     steps:
       - uses: actions/github-script@v6
         with:
