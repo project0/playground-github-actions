@@ -16,8 +16,8 @@ jobs:
     name: Build and Deploy (${{ github.event.label.name}})
     uses: ./.github/workflows/deploy.yaml
     with:
-      deploy_environments: ${{ toJSON(fromJSON('{"deploy/sbx": ["sbx"], "deploy/dev": ["dev"]}')[github.event.label.name]) }}
-
+      deploy_environments: |
+        ${{ toJSON(fromJSON('{"deploy/sbx": ["sbx"], "deploy/dev": ["dev"]}')[github.event.label.name]) }}
 
   comment:
     runs-on: ubuntu-latest
