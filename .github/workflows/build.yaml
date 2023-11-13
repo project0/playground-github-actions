@@ -26,4 +26,3 @@ jobs:
     uses: ./.github/workflows/deploy.yaml
     with:
       deploy_environments: '["sbx","dev"]'
-      enable_soci: true
