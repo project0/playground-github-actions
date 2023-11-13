@@ -2,8 +2,6 @@
 on:
   pull_request:
     types: [labeled]
-  label:
-    types: [created]
 
 
 permissions:
@@ -31,5 +29,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '👋 New deployment in progress on ${{ github.event.label.name }} !'
+              body: '👋 New deployment in progress on ${{ github.event.label.name }}!'
             })
