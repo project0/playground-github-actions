@@ -1,0 +1,14 @@
+# Triggered by main build.yaml
+name: Tests
+on:
+  workflow_call:
+
+env:
+  NODE_ENV: test
+  NODE_VERSION: "18.x"
+jobs:
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "do something smart here"

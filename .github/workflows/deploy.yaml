@@ -1,0 +1,50 @@
+name: Build and Deploy
+concurrency: build-deploy-${{ github.ref_name }}
+
+# Triggered by main build.yaml
+on:
+  workflow_call:
+    inputs:
+      deploy_environments:
+        type: string
+        description: 'list of environments to deploy to (as json array)'
+        default: '[]'
+
+env:
+  HELLO: WORLD
+
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read # This is required for actions/checkout
+
+jobs:
+  docker-image:
+    name: 'Build and push docker image'
+    runs-on: ubuntu-latest
+    outputs:
+      # use image tag with highest prio
+      image: test-image
+      deploy_role_map: |
+        {
+          "sbx": "arn:aws:iam::00:role/deploy/deploy-github-ecs",
+          "dev": "arn:aws:iam::01:role/deploy/deploy-github-ecs",
+          "prod": "arn:aws:iam::02:role/deploy/deploy-github-ecs"
+        }
+
+    steps:
+      - name: Git clone the repository
+        run: echo "Cloning repository"
+
+
+  # https://stackoverflow.com/questions/69740308/github-action-use-matrices-with-reuse-able-workflow
+  deploy:
+    strategy:
+      matrix:
+        target: ${{ fromJSON(inputs.deploy_environments) }}
+    name: 'Deploy to ECS (${{ matrix.target }})'
+    needs: docker-image
+    uses: ./.github/workflows/deploy-ecs.yaml
+    with:
+      aws_role: ${{ fromJson(needs.docker-image.outputs.deploy_role_map)[matrix.target] }}
+      image: ${{ needs.docker-image.outputs.image }}

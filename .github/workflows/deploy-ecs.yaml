@@ -1,0 +1,28 @@
+name: Deploy ECS Container
+# called by deploy.yaml
+on:
+  workflow_call:
+    inputs:
+      aws_role:
+        type: string
+        description: "AWS role to assume"
+        required: true
+
+      image:
+        type: string
+        description: "Docker image to deploy"
+        required: true
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+
+env:
+  AWS_ROLE: ${{ inputs.aws_role }}
+
+jobs:
+  deploy:
+    name: Deploy ECS
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy image
+        run: echo "${{inputs.image}} with ${{inputs.aws_role}}"
