@@ -1,0 +1,11 @@
+# Trigger a workflow run on a pull request labeled w
+name: Deploy to sandbox
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-sbx:
+    name: Build and Deploy (SBX)
+    uses: ./.github/workflows/deploy.yaml
+    with:
+      deploy_environments: '["sbx"]'
