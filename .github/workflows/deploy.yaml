@@ -7,12 +7,11 @@ on:
     inputs:
       deploy_environments:
         type: string
-        description: 'list of environments to deploy to (as json array)'
-        default: '[]'
+        description: "list of environments to deploy to (as json array)"
+        default: "[]"
 
 env:
   HELLO: WORLD
-
 
 permissions:
   id-token: write # This is required for requesting the JWT
@@ -20,7 +19,7 @@ permissions:
 
 jobs:
   docker-image:
-    name: 'Build and push docker image'
+    name: "Build and push docker image"
     runs-on: ubuntu-latest
     outputs:
       # use image tag with highest prio
@@ -36,15 +35,16 @@ jobs:
       - name: Git clone the repository
         run: echo "Cloning repository"
 
-
   # https://stackoverflow.com/questions/69740308/github-action-use-matrices-with-reuse-able-workflow
   deploy:
     strategy:
       matrix:
         target: ${{ fromJSON(inputs.deploy_environments) }}
-    name: 'Deploy to ECS (${{ matrix.target }})'
+
+    name: "Deploy to ECS (${{ matrix.target }})"
     needs: docker-image
     uses: ./.github/workflows/deploy-ecs.yaml
     with:
       aws_role: ${{ fromJson(needs.docker-image.outputs.deploy_role_map)[matrix.target] }}
       image: ${{ needs.docker-image.outputs.image }}
+      environment: ${{ matrix.target }}

@@ -3,6 +3,8 @@ name: Deploy ECS Container
 on:
   workflow_call:
     inputs:
+      environment:
+        type: string
       aws_role:
         type: string
         description: "AWS role to assume"
@@ -21,6 +23,7 @@ env:
 
 jobs:
   deploy:
+    environment:
     name: Deploy ECS
     runs-on: ubuntu-latest
     steps:
