@@ -23,7 +23,7 @@ env:
 
 jobs:
   deploy:
-    environment:
+    environment: ${{ inputs.environment }}
     name: Deploy ECS
     runs-on: ubuntu-latest
     steps:
