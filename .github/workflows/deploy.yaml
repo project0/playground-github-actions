@@ -1,5 +1,5 @@
 name: Build and Deploy
-concurrency: build-deploy-${{ github.ref_name }}
+# concurrency: build-deploy-${{ github.ref_name }}
 
 # Triggered by main build.yaml
 on:
